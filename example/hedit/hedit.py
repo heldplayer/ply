@@ -44,5 +44,5 @@ def t_error(t):
 
 # Build the lexer
 import ply.lex as lex
-lex.lex()
-lex.runmain()
+lexer = lex.lex()
+lex.runmain(lexer)

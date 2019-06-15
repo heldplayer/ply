@@ -113,7 +113,7 @@ def t_error(t):
     print(t.value)
     t.lexer.skip(1)
 
-lex.lex()
+lexer = lex.lex()
 
 if __name__ == '__main__':
-    lex.runmain()
+    lex.runmain(lexer)

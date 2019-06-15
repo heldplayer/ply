@@ -867,13 +867,10 @@ def lex(module=None, object=None, debug=False, optimize=False, lextab='lextab',
     if lextab is None:
         lextab = 'lextab'
 
-    global lexer
-
     ldict = None
     stateinfo  = {'INITIAL': 'inclusive'}
     lexobj = Lexer()
     lexobj.lexoptimize = optimize
-    global token, input
 
     if errorlog is None:
         errorlog = PlyLogger(sys.stderr)
@@ -913,9 +910,6 @@ def lex(module=None, object=None, debug=False, optimize=False, lextab='lextab',
     if optimize and lextab:
         try:
             lexobj.readtab(lextab, ldict)
-            token = lexobj.token
-            input = lexobj.input
-            lexer = lexobj
             return lexobj
 
         except ImportError:
@@ -1015,11 +1009,6 @@ def lex(module=None, object=None, debug=False, optimize=False, lextab='lextab',
             if s not in linfo.ignore:
                 linfo.ignore[s] = linfo.ignore.get('INITIAL', '')
 
-    # Create global versions of the token() and input() functions
-    token = lexobj.token
-    input = lexobj.input
-    lexer = lexobj
-
     # If in optimize mode, we write the lextab
     if lextab and optimize:
         if outputdir is None:
@@ -1053,7 +1042,7 @@ def lex(module=None, object=None, debug=False, optimize=False, lextab='lextab',
 # This runs the lexer as a main program
 # -----------------------------------------------------------------------------
 
-def runmain(lexer=None, data=None):
+def runmain(lexer, data=None):
     if not data:
         try:
             filename = sys.argv[1]
@@ -1063,18 +1052,10 @@ def runmain(lexer=None, data=None):
             sys.stdout.write('Reading from standard input (type EOF to end):\n')
             data = sys.stdin.read()
 
-    if lexer:
-        _input = lexer.input
-    else:
-        _input = input
-    _input(data)
-    if lexer:
-        _token = lexer.token
-    else:
-        _token = token
+    lexer.input(data)
 
     while True:
-        tok = _token()
+        tok = lexer.token()
         if not tok:
             break
         sys.stdout.write('(%s,%r,%d,%d)\n' % (tok.type, tok.value, tok.lineno, tok.lexpos))
