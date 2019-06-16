@@ -116,32 +116,53 @@ class NullLogger(object):
 
 class Lexer:
     def __init__(self):
-        self.lexre = None             # Master regular expression. This is a list of
-                                      # tuples (re, findex) where re is a compiled
-                                      # regular expression and findex is a list
-                                      # mapping regex group numbers to rules
-        self.lexretext = None         # Current regular expression strings
-        self.lexstatere = {}          # Dictionary mapping lexer states to master regexs
-        self.lexstateretext = {}      # Dictionary mapping lexer states to regex strings
-        self.lexstaterenames = {}     # Dictionary mapping lexer states to symbol names
+        # Master regular expression. This is a list of tuples (re, findex) where re is a
+        # compiled regular expression and findex is a list mapping regex group numbers
+        # to rules.
+        self.lexre = None
+        # Dictionary mapping lexer states to master regexs
+        self.lexstatere = {}
+
+        # Current regular expression strings
+        self.lexretext = None
+        # Dictionary mapping lexer states to regex strings
+        self.lexstateretext = {}
+
+        # Ignored characters
+        self.lexignore = ''
+        # Dictionary of ignored characters for each state
+        self.lexstateignore = {}
+
+        # Error rule (if any)
+        self.lexerrorf = None
+        # Dictionary of error functions for each state
+        self.lexstateerrorf = {}
+
+        # EOF rule (if any)
+        self.lexeoff = None
+        # Dictionary of eof functions for each state
+        self.lexstateeoff = {}
+
+        # Literal characters that can be passed through
+        self.lexliterals = ''
+        # TODO: Allow per state
+
+        # Current state information
         self.lexstate = 'INITIAL'     # Current lexer state
         self.lexstatestack = []       # Stack of lexer states
-        self.lexstateinfo = None      # State information
-        self.lexstateignore = {}      # Dictionary of ignored characters for each state
-        self.lexstateerrorf = {}      # Dictionary of error functions for each state
-        self.lexstateeoff = {}        # Dictionary of eof functions for each state
-        self.lexreflags = 0           # Optional re compile flags
         self.lexdata = None           # Actual input data (as a string)
         self.lexpos = 0               # Current position in input text
         self.lexlen = 0               # Length of the input text
-        self.lexerrorf = None         # Error rule (if any)
-        self.lexeoff = None           # EOF rule (if any)
-        self.lextokens = None         # List of valid tokens
-        self.lexignore = ''           # Ignored characters
-        self.lexliterals = ''         # Literal characters that can be passed through
-        self.lexmodule = None         # Module
         self.lineno = 1               # Current line number
+
+        self.lextokens = None         # List of valid tokens
         self.lexoptimize = False      # Optimized mode
+
+        # Used only for reading and writing tabs
+        self.lexmodule = None         # Module
+        self.lexstateinfo = None      # State information
+        self.lexstaterenames = {}     # Dictionary mapping lexer states to symbol names
+        self.lexreflags = 0           # Optional re compile flags
 
     def clone(self, object=None):
         c = copy.copy(self)
